@@ -7,85 +7,85 @@
  * Created:
  * Copyright:   (c) crazylion 2013
  * Licence:     <The MIT License>
- *******************************************************************************/
- #include <stdlib.h>
- #include <string.h>
+********************************************************************************/
+#include <stdlib.h>
+#include <string.h>
 
- #include "list.h"
- #include "chtbl.h"
+#include "list.h"
+#include "chtbl.h"
 
- /* chtbl_init */
- int chtbl_init(CHTbl *htbl, int buckets, int (*h)(const void *key), int (*match)(const void *key1, const void *key2), void (*destroy)(void *data))
- {
-     int i;
-     // Allocate space for the hash table.
-     if((htbl->table = (List *)malloc(buckets *sizeof(List))) == NULL)
-     {
-         return -1;
-     }
+/* chtbl_init */
+int chtbl_init(CHTbl *htbl, int buckets, int (*h)(const void *key), int (*match)(const void *key1, const void *key2), void (*destroy)(void *data))
+{
+    int i;
+    // Allocate space for the hash table.
+    if((htbl->table = (List *)malloc(buckets *sizeof(List))) == NULL)
+    {
+        return -1;
+    }
 
-     // Initialize the buckets.
-     htbl->buckets = buckets;
-     for(i = 0; i < htbl->buckets; i++)
-     {
-         list_init(&htbl->table[i], destroy);
-     }
+    // Initialize the buckets.
+    htbl->buckets = buckets;
+    for(i = 0; i < htbl->buckets; i++)
+    {
+        list_init(&htbl->table[i], destroy);
+    }
 
-     // Encapsulate the functions.
-     htbl->h = h;
-     htbl->match = match;
-     htbl->destroy = destroy;
+    // Encapsulate the functions.
+    htbl->h = h;
+    htbl->match = match;
+    htbl->destroy = destroy;
 
-     // Initialize the number of elements in the table.
-     htbl->size = 0;
+    // Initialize the number of elements in the table.
+    htbl->size = 0;
 
-     return 0;
- }
+    return 0;
+}
 
- /* chtbl_destroy */
- void chtbl_destroy(CHTbl *htbl)
- {
-     int i;
+/* chtbl_destroy */
+void chtbl_destroy(CHTbl *htbl)
+{
+    int i;
 
-     // Destroy each bucket.
-     for(i = 0; i < htbl->buckets; i++)
-     {
-         list_destroy(&htbl->table[i]);
-     }
+    // Destroy each bucket.
+    for(i = 0; i < htbl->buckets; i++)
+    {
+        list_destroy(&htbl->table[i]);
+    }
 
-     // Free the storage allocated for the hash table.
-     free(htbl->table);
+    // Free the storage allocated for the hash table.
+    free(htbl->table);
 
-     memset(htbl, 0, sizeof(CHTbl));
+    memset(htbl, 0, sizeof(CHTbl));
 
-     return;
- }
+    return;
+}
 
- /* chtbl_insert */
- int chtbl_insert(CHTbl *htbl, const void *data)
- {
-     void *temp;
-     int bucket;
-     int retval;
+/* chtbl_insert */
+int chtbl_insert(CHTbl *htbl, const void *data)
+{
+    void *temp;
+    int bucket;
+    int retval;
 
-     // Do nothing if the data is already in the table.
-     temp = (void *)data;
-     if(chtbl_lookup(htbl, &temp) == 0)
-     {
-         return 1;
-     }
+    // Do nothing if the data is already in the table.
+    temp = (void *)data;
+    if(chtbl_lookup(htbl, &temp) == 0)
+    {
+        return 1;
+    }
 
-     // Hash the key.
-     bucket = htbl->h(data) % htbl->buckets;
+    // Hash the key.
+    bucket = htbl->h(data) % htbl->buckets;
 
-     // Insert the data into the bucket.
-     if((retval = list_ins_next(&htbl->table[bucket], NULL, data)) == 0)
-     {
-         htbl->size++;
-     }
+    // Insert the data into the bucket.
+    if((retval = list_ins_next(&htbl->table[bucket], NULL, data)) == 0)
+    {
+        htbl->size++;
+    }
 
-     return retval;
- }
+    return retval;
+}
 
 /* chtbl_remove */
 int chtbl_remove(CHTbl *htbl, void **data)

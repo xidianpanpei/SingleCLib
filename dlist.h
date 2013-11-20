@@ -10,16 +10,16 @@
  * Created:
  * Copyright:   (c) crazylion 2013
  * Licence:     <The MIT License>
- *******************************************************************************/
- #include <stdlib.h>
+********************************************************************************/
+#include <stdlib.h>
 
- /* Define a structure for doubly-linked list elements. */
- typedef struct DListElmt_
- {
-     void *data;
-     struct DListElmt_ *prev;
-     struct DListElmt_ *next;
- } DListElmt;
+/* Define a structure for doubly-linked list elements. */
+typedef struct DListElmt_
+{
+    void *data;
+    struct DListElmt_ *prev;
+    struct DListElmt_ *next;
+} DListElmt;
 
 /* Define a structure for doubly-linked lists. */
 typedef struct DList_
